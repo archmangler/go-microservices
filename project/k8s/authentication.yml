@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-service
+  namespace: cmdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication-service
+  template:
+    metadata:
+      labels:
+        app: authentication-service
+    spec:
+      containers:
+      - name: authentication-service
+        image:  "archbungle/authentication-service:1.0.1"
+        env:
+          - name: DSN
+            value: "host=postgres port=5432 user=postgres password=engeneon777 dbname=users sslmode=disable"
+        ports:
+          - containerPort: 80
+---
+#export POSTGRES_PASSWORD=$(kubectl get secret postgres-secret-config -n ipam -o jsonpath="{.data.password}" | base64 --decode)
+#kubectl run postgres-client -n ipam --rm --tty -i --restart='Never' --image postgres:11 --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql -h postgres -U postgres
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication-service
+  namespace: cmdb
+spec:
+  selector:
+    app: authentication-service
+  ports:
+    - protocol: TCP
+      name: main-port
+      port: 80
+      targetPort: 80
