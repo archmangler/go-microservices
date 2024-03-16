@@ -18,3 +18,11 @@
 * docker swarm support
 * plain docker support
 
+# Testing
+
+The following can be tested:
+
+* routes
+* database
+
+
