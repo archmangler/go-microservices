@@ -29,7 +29,7 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//validate the user against the database
-	user, err := app.Models.User.GetByEmail(requestPayload.Email)
+	user, err := app.Repo.GetByEmail(requestPayload.Email)
 
 	if err != nil {
 		app.errorJSON(w, errors.New("invalid credentials"), http.StatusBadRequest)
@@ -39,7 +39,7 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("successfully validated user against pg database Authenticate() ...") //debugging
 
-	valid, err := user.PasswordMatches(requestPayload.Password)
+	valid, err := app.Repo.PasswordMatches(requestPayload.Password, *user)
 	if err != nil || !valid {
 		app.errorJSON(w, errors.New("invalid credentials"), http.StatusBadRequest)
 		log.Println("invalid credentials ...") //debugging
@@ -89,8 +89,8 @@ func (app *Config) logRequest(name, data string) error {
 
 	log.Println("got request from http.NewRequest (logRequest) ...", request) //debugging
 
-	client := &http.Client{}
-	_, err = client.Do(request)
+	//client := &http.Client{}
+	_, err = app.Client.Do(request)
 	if err != nil {
 		return err
 	}

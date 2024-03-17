@@ -20,9 +20,12 @@
 
 # Testing
 
-The following can be tested:
+We use the Golang testing ("testing") framework. The following can be tested:
 
 * routes
 * database
+
+
+# Repository Pattern
 
 
